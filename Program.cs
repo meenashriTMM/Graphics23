@@ -62,7 +62,7 @@ class MyWindow : Window {
             else SetPixel (x, y, 255);
             if (d >= 0) { y = y + add; d += 2 * (dy - dx); } else d += 2 * dy;
          }
-         mBmp.AddDirtyRect (new Int32Rect (0, 0, mBmp.PixelWidth, mBmp.PixelHeight));
+         mBmp.AddDirtyRect (new Int32Rect (x0, y0, dx + 1, dy + 1));
       } finally {
          mBmp.Unlock ();
       }
