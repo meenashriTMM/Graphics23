@@ -74,6 +74,17 @@ class GrayBMP {
       Dirty (x1, y1); Dirty (x2, y2);
    }
 
+   public void DrawHorizontalLine (int x1, int x2, int y, int gray) {
+      Begin ();
+      Check (x1, y); Check (x2, y); Dirty (x1, y, x2, y);
+      if (x1 > x2) (x1, x2) = (x2, x1);
+      unsafe {
+         byte* ptr = (byte*)(Buffer + y * mStride + x1);
+         System.Runtime.CompilerServices.Unsafe.InitBlock (ref *ptr, (byte)gray, (uint)(x2 - x1));
+      }
+      End ();
+   }
+
    /// <summary>Draws a line between the given endpoints, with the given shade of gray</summary>
    public void DrawLine (int x1, int y1, int x2, int y2, int gray) {
       Begin ();
