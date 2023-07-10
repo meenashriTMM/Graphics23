@@ -78,9 +78,10 @@ class GrayBMP {
       Begin ();
       Check (x1, y); Check (x2, y); Dirty (x1, y, x2, y);
       if (x1 > x2) (x1, x2) = (x2, x1);
+      byte bGray = (byte)gray;
       unsafe {
-         byte* ptr = (byte*)(Buffer + y * mStride + x1);
-         System.Runtime.CompilerServices.Unsafe.InitBlock (ref *ptr, (byte)gray, (uint)(x2 - x1));
+         byte* ptr = (byte*)(Buffer + y * mStride) + x1;
+         for (int i = x1; i <= x2; i++, ptr++) *ptr = bGray;
       }
       End ();
    }

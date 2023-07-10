@@ -5,6 +5,7 @@ using System.Windows.Media;
 using System.Windows.Controls;
 using System.Windows.Threading;
 using System.IO;
+using System.Reflection;
 
 namespace GrayBMP;
 
@@ -25,7 +26,16 @@ class LinesWin : Window {
       RenderOptions.SetEdgeMode (image, EdgeMode.Aliased);
       Content = image;
       mDX = mBmp.Width; mDY = mBmp.Height;
-      FillPolygon ("C:/etc/leaf-fill.txt");
+
+      // Fill polygon
+      var polyFill = new PolyFill ();
+      using var sr = new StreamReader (Assembly.GetExecutingAssembly ().GetManifestResourceStream ("GrayBMP.Res.leaf-fill.txt"));
+      string line;
+      while ((line = sr.ReadLine ()) is not null) {
+         var pts = line.Split ().Select (int.Parse).ToArray ();
+         polyFill.AddLine (pts[0], pts[1], pts[2], pts[3]);
+      }
+      polyFill.Fill (mBmp, 255);
       // Start a timer to repaint a new frame every 33 milliseconds
       //DispatcherTimer timer = new () {
       //   Interval = TimeSpan.FromMilliseconds (100), IsEnabled = true,
@@ -49,18 +59,6 @@ class LinesWin : Window {
       }
    }
    Random R = new ();
-
-   void FillPolygon (string file) {
-      var lines = File.ReadAllLines (file).Select (a => a.Split (' ').Select (a => Convert.ToInt32 (a)).ToArray ());
-      using (new BlockTimer ("Fill polygon")) {
-         mBmp.Begin ();
-         mBmp.Clear (0);
-         var polyFill = new PolyFill ();
-         foreach (var line in lines) polyFill.AddLine (line[0], line[1], line[2], line[3]);
-         polyFill.Fill (mBmp);
-         mBmp.End ();
-      }
-   }
 }
 
 class BlockTimer : IDisposable {
