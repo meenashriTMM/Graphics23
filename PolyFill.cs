@@ -36,6 +36,11 @@ class PolyFill {
 }
 
 class PolyFillFast {
+   public void AddLine (Point2 a, Point2 b) {
+      var ((x0, y0), (x1, y1)) = (a.Round (), b.Round ());
+      AddLine (x0, y0, x1, y1);
+   }
+
    public void AddLine (int x0, int y0, int x1, int y1) {
       if (y0 == y1) return;
       if (y0 > y1) (x0, y0, x1, y1) = (x1, y1, x0, y0);

@@ -126,6 +126,22 @@ class GrayBMP {
       End ();
    }
 
+   public void DrawThickLine (int x0, int y0, int x1, int y1, int width, int gray) {
+      if (width < 2) { DrawLine (x0, y0, x1, y1, gray); return; }
+      mPF.Reset (); mPts.Clear ();
+      Point2 p1 = new (x0, y0), p2 = new (x1, y1);
+      int dx = x1 - x0, dy = y1 - y0, w = width / 2;
+      double angle = Atan2 (dy, dx), a = PI / 2, b = PI / 3;
+      for (int i = 0; i < 2; i++) {
+         var theta = angle + a;
+         (Point2 p, double r) = i == 0 ? (p1, -w) : (p2, w);
+         for (int j = 0; j < 4; j++, theta -= b) mPts.Add (p.RadialMove (r, theta));
+      }
+      mPts.ForEachPairCircular (mPF.AddLine);
+      mPF.Fill (this, gray);
+   }
+   PolyFillFast mPF = new (); List<Point2> mPts = new ();
+
    /// <summary>Call End after finishing the update of the bitmap</summary>
    public void End () {
       if (--mcLocks == 0) {

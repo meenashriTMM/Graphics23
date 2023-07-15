@@ -46,15 +46,12 @@ class PolyFillWin : Window {
       mBmp.Begin ();
       mBmp.Clear (192);
       mPF.Reset ();
-      foreach (var line in mDwg.Lines) {
-         var ((x0, y0), (x1, y1)) = (line.A.Round (), line.B.Round ());
-         mPF.AddLine (x0, y0, x1, y1);
-      }
+      foreach (var line in mDwg.Lines) mPF.AddLine (line.A, line.B);
       mPF.Fill (mBmp, 255);
 
       foreach (var line in mDwg.Lines) {
          var ((x0, y0), (x1, y1)) = (line.A.Round (), line.B.Round ());
-         mBmp.DrawLine (x0, y0, x1, y1, 0);
+         mBmp.DrawThickLine (x0, y0, x1, y1, mScale, 0);
       }
       mBmp.End ();
    }

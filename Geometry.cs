@@ -23,6 +23,9 @@ readonly struct Complex {
 /// <summary>A point in 2D space, with double-precision coordinates (X, Y)</summary>
 readonly record struct Point2 (double X, double Y) {
    public (int X, int Y) Round () => ((int)(X + 0.5), (int)(Y + 0.5));
+
+   /// <summary>Does a radial move (polar move) given a particular radius and theta</summary>
+   public Point2 RadialMove (double r, double theta) => new Point2 (X + r * Math.Cos (theta), Y + r * Math.Sin (theta));
 }
 
 /// <summary>A Line in 2 dimensions (A -> B)</summary>
@@ -34,4 +37,18 @@ class Drawing {
 
    public IReadOnlyList<Line> Lines => mLines;
    List<Line> mLines = new ();
+}
+
+public static class Extension {
+   /// <summary>Given a sequence, this applies the action to each pair of elements (treating the sequence as circular)</summary>
+   public static void ForEachPairCircular<T> (this IEnumerable<T> src, Action<T, T> action) {
+      bool first = true;
+      T prev = default, zero = default;
+      foreach (var item in src) {
+         if (!first) action (prev, item);
+         else zero = item;
+         prev = item; first = false;
+      }
+      if (!first) action (prev, zero);
+   }
 }
